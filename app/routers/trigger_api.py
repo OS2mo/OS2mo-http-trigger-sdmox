@@ -158,11 +158,8 @@ async def triggers_address_create(
     dry_run = dry_run or False
 
     unit_uuid = payload.request.get("org_unit", {}).get("uuid")
-    if not unit_uuid:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Missing organization unit UUID when adding address.",
-        )
+    if not unit_uuid:  # Probably an employee address
+        return {"status": "NOOP"}
     # We will never create an addresses for units outside non-triggered uuid.
     # TODO: Consider whether we should block inserts in these cases, probably not
     at = datetime.strptime(payload.request["validity"]["from"], "%Y-%m-%d").date()
@@ -189,11 +186,8 @@ async def triggers_address_edit(
     dry_run = dry_run or False
 
     unit_uuid = payload.request.get("org_unit", {}).get("uuid")
-    if not unit_uuid:
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Missing organization unit UUID when adding address.",
-        )
+    if not unit_uuid:  # Probably an employee address
+        return {"status": "NOOP"}
     # We will never create an addresses for units outside non-triggered uuid.
     # TODO: Consider whether we should block inserts in these cases, probably not
     at = datetime.strptime(
